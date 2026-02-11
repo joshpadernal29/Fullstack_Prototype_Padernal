@@ -1,3 +1,29 @@
-.warning1 {
-    color: rgb(218, 95, 116);
+/*hide page*/
+.page {
+    display: none;
+}
+
+/*show page*/
+.page.active {
+    display: block;
+}
+
+/*for sections*/
+body.not-authenticated .role-logged-in {
+    display: none;
+}
+
+/*for sections*/
+body.authenticated .role-logged-out {
+    display: none;
+}
+
+/*for sections*/
+.role-admin {
+    display: none;
+}
+
+/*for sections*/
+body.is-admin .role-admin {
+    display: block;
 }

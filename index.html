@@ -46,7 +46,7 @@
     <!--main-->
     <main class="container">
         <!-- Home Page-->
-        <section id="home-page" class="page">
+        <section id="home-page" class="page active">
             <h3>Welcome to Full Stack App</h3>
             <p>A static prototype before Backend integration simulates:</p>
             <ul>
@@ -56,10 +56,10 @@
                 <li>CRUD for Employees, Department, Requests</li>
             </ul>
             <div class="alert alert-info" role="alert">
-                &#9888; <b>Note: </b>all data is stored in <span class="warning1">local storage.</span> Refresh to
+                &#9888; <b>Note: </b>all data is stored in <span class=".text-danger">local storage.</span> Refresh to
                 reset.
             </div>
-            <a href="#register" type="button" class="btn btn-primary">Get Started &#x2192;</a>
+            <a href="#/register" type="button" class="btn btn-primary">Get Started &#x2192;</a>
         </section>
         <!-- register account form-->
         <section id="register-page" class="page">
@@ -79,8 +79,8 @@
                         <h5>Password</h5>
                         <input type="password" class="form-control" placeholder="Password" required>
                         <br>
-                        <button type="submit" class="btn btn-primary">Register</button>
-                        <button type="button" class="btn btn-danger">Cancel</button>
+                        <button type="submit" class="btn btn-success">Sign up</button>
+                        <button type="button" class="btn btn-outline-danger">Cancel</button>
                     </div>
                 </div>
             </form>
@@ -90,8 +90,24 @@
 
         </section>
         <!--Login page-->
-        <section id="login" class="page">
-
+        <section id="login-page" class="page">
+            <form>
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Login</h3>
+                        <hr>
+                        <h4>Email</h4>
+                        <input type="email" class="form-control" placeholder="Email" aria-label="EmailAdd"
+                            aria-describedby="addon-wrapping" required>
+                        <h4>Password</h4>
+                        <input type="password" class="form-control" placeholder="Password" aria-label="pass"
+                            aria-describedby="addon-wrapping" required>
+                        <br>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="button" class="btn btn-outline-danger">Cancel</button>
+                    </div>
+                </div>
+            </form>
         </section>
 
         <section id="profile" class="page">
