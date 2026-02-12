@@ -33,7 +33,7 @@
                             <li><a class="dropdown-item" href="#/profile">Profile</a></li>
                             <li><a class="dropdown-item" href="#/requests">My Requests</a></li>
                             <li>
-                                <hr class="dropdown-divider">
+                                <hr>
                             </li>
                             <li><button class="dropdown-item" onclick="logout()">Logout</button></li>
                         </ul>
@@ -43,10 +43,10 @@
         </div>
     </nav>
     <!--end of navigation bar-->
-    <!--main-->
+    <!--main content-->
     <main class="container">
         <!-- Home Page-->
-        <section id="home-page" class="page active">
+        <section id="home-page" class="page">
             <h3>Welcome to Full Stack App</h3>
             <p>A static prototype before Backend integration simulates:</p>
             <ul>
@@ -63,31 +63,44 @@
         </section>
         <!-- register account form-->
         <section id="register-page" class="page">
-            <form>
+            <form onsubmit="registration(event)">
                 <div class="card">
                     <div class="card-body">
                         <h3>Register Account</h3>
                         <hr>
                         <h5>First Name</h5>
                         <input type="text" class="form-control" placeholder="Firstname" aria-label="First Name"
-                            aria-describedby="addon-wrapping" required>
+                            aria-describedby="addon-wrapping" id="fname" required>
                         <h5>Last Name</h5>
                         <input type="text" class="form-control" placeholder="Lastname" aria-label="Last Name"
-                            aria-describedby="addon-wrapping" required>
+                            aria-describedby="addon-wrapping" id="lname" required>
                         <h5>Email</h5>
-                        <input type="email" class="form-control" placeholder="Email" required>
+                        <input type="email" class="form-control" placeholder="Email" id="email" required>
                         <h5>Password</h5>
-                        <input type="password" class="form-control" placeholder="Password" required>
+                        <input type="password" class="form-control" placeholder="Password" id="password" required>
                         <br>
-                        <button type="submit" class="btn btn-success">Sign up</button>
-                        <button type="button" class="btn btn-outline-danger">Cancel</button>
+                        <button type="submit" class="btn btn-success"
+                            onsubmit="registration(fname,lname,email,password)">Sign up</button>
+                        <button type="button" class="btn btn-outline-danger" onclick="navigateTo('#/')">Cancel</button>
                     </div>
                 </div>
             </form>
         </section>
         <!--Verify email-->
         <section id="verify-email" class="page">
-
+            <div class="card">
+                <div class="card-body">
+                    <h3>Verify Your Email</h3>
+                    <hr>
+                    <div class="alert alert-success" role="alert">
+                        &#9989; A Verification has been sent to: <span id="showEmail"></span>
+                    </div>
+                    <p>For Demo purposes, Click below to simulate verification</p>
+                    <button type="button" class="btn btn-success">&#9989; Simulate Email Verification</button>
+                    <button type="button" class="btn btn-outline-dark" onclick="navigateTo('#/login')">Go to
+                        Login</button>
+                </div>
+            </div>
         </section>
         <!--Login page-->
         <section id="login-page" class="page">
@@ -104,7 +117,7 @@
                             aria-describedby="addon-wrapping" required>
                         <br>
                         <button type="submit" class="btn btn-primary">Login</button>
-                        <button type="button" class="btn btn-outline-danger">Cancel</button>
+                        <button type="button" class="btn btn-outline-danger" onclick="navigateTo('#/')">Cancel</button>
                     </div>
                 </div>
             </form>
