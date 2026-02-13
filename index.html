@@ -30,12 +30,13 @@
                     <li class="nav-item dropdown role-logged-in">
                         <a class="nav-link dropdown-toggle" href="#" id="userDrop" data-bs-toggle="dropdown">User</a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#/profile">Profile</a></li>
+                            <li><a class="dropdown-item" href="#/userProfile">Profile</a></li>
                             <li><a class="dropdown-item" href="#/requests">My Requests</a></li>
                             <li>
                                 <hr>
                             </li>
-                            <li><button class="dropdown-item" onclick="logout()">Logout</button></li>
+                            <li><button class="dropdown-item" class="btn-outline-danger"
+                                    onclick="logout()">Logout</button></li>
                         </ul>
                     </li>
                 </ul>
@@ -115,12 +116,12 @@
                         <hr>
                         <h4>Email</h4>
                         <input type="email" class="form-control" placeholder="Email" aria-label="EmailAdd"
-                            aria-describedby="addon-wrapping" required>
+                            aria-describedby="addon-wrapping" id="loginEmail" required>
                         <h4>Password</h4>
                         <input type="password" class="form-control" placeholder="Password" aria-label="pass"
-                            aria-describedby="addon-wrapping" required>
+                            aria-describedby="addon-wrapping" id="loginPassword" required>
                         <br>
-                        <button type="submit" class="btn btn-primary">Login</button>
+                        <button type="button" class="btn btn-primary" onclick="login(event)">Login</button>
                         <button type="button" class="btn btn-outline-danger" onclick="navigateTo('#/')">Cancel</button>
                     </div>
                 </div>
@@ -128,7 +129,19 @@
         </section>
 
         <section id="profile" class="page">
-
+            <div class="container">
+                <h3>My Profile</h3>
+                <div class="card">
+                    <div class="card-body">
+                        <h6><b>Admin user</b></h6>
+                        <hr>
+                        <p><b>Email:</b> admin@gmail.com</p>
+                        <p><b>Role:</b> Admin</p>
+                        <br>
+                        <button type="button" class="btn btn-outline-primary">Edit Profile</button>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section id="employees" class="page">

@@ -4,8 +4,35 @@ function navigateTo(hash) {
     window.location.hash = hash;
 }
 
+// update body for logged as user or admin etc...
+function updateBody() {
+    const body = document.body;
+
+    // remove body class
+    body.classList.remove('not-authenticated', 'authenticated', 'is-admin');
+
+    // if user log in
+    if (currentUser) {
+        // if current user = true
+        body.classList.add('authenticated');
+        // if current user = admin add .is-admin
+        if (currentUser.role === 'admin') {
+            body.classList.add('is-admin')
+        }
+    } else {
+        body.classList.add('not-authenticated');
+    }
+}
+
+// setAuthstate
+function setAuthState(user) {
+    currentUser = user;
+    updateBody();
+    handleRouting();
+}
+
 function handleRouting() {
-    const hash = window.location.hash;
+    const hash = window.location.hash || '#/';
     console.log("location:" + hash);
     // select pages
     const pages = document.querySelectorAll(".page");
@@ -25,6 +52,8 @@ function handleRouting() {
         sectionId = 'login-page';
     } else if (hash === '#/verify') {
         sectionId = 'verify-email';
+    } else if (hash === '#/userProfile') {
+        sectionId = 'profile';
     }
 
     // show only when done with email verification
@@ -43,34 +72,39 @@ function handleRouting() {
         activePage.classList.add('active'); // add active to the class
     }
 }
-// set to default home page
+// to stop being loged out incase of refresh
 window.addEventListener('load', () => {
-    // If the URL is empty, set it to home page
-    if (!window.location.hash || window.location.hash === "#") {
-        window.location.replace("#/");
+    const token = localStorage.getItem('auth_token');
+
+    if (token) {
+        const found = window.db.accounts.find(acc => acc.email === token);
+        if (found) {
+            currentUser = found;
+        }
     }
 
+    updateBody();
     handleRouting();
 });
 window.addEventListener('hashchange', handleRouting);
 
 // Authentication
-// temp db
+
 window.db = {
-    accounts: []
+    // intialize temp db
+    accounts: JSON.parse(localStorage.getItem('accounts')) || []
 };
 
 function registration(event) {
-    // check if email already exist in window.db.accounts
-    const emailExist = window.db.accounts.some(acc => acc.email === email);
     event.preventDefault();
-
     // get input data
     const inputFname = document.getElementById('fname').value;
     const inputLname = document.getElementById('lname').value;
     const inputEmail = document.getElementById('email').value;
     const inputPassword = document.getElementById('password').value;
 
+    // check if email already exist in window.db.accounts
+    const emailExist = window.db.accounts.some(acc => acc.email === inputEmail);
     // check if email already exists
     if (emailExist) {
         alert("Email already Exists!");
@@ -81,7 +115,8 @@ function registration(event) {
             Lname: inputLname,
             email: inputEmail,
             password: inputPassword,
-            verified: false
+            verified: false,
+            role: "user" // default
         };
 
         console.log("account pushed:" + inputEmail);
@@ -100,7 +135,7 @@ function registration(event) {
 // verify email
 function verifyEmail() {
     const findEmail = localStorage.getItem('unverified_email');
-    const user = window.db.accounts.find(acc => acc.email = email);
+    const user = window.db.accounts.find(acc => acc.email === findEmail);
 
     // set the email verified to true
     if (user) {
@@ -114,4 +149,40 @@ function verifyEmail() {
         navigateTo('#/login?verified=true');
     }
 }
+
+
+// login account
+function login(event) {
+    event.preventDefault();
+    // get user input
+    const userEmail = document.getElementById('loginEmail').value;
+    const userPassword = document.getElementById('loginPassword').value;
+
+    // find email + password and verified in the storage and compare
+    const findAccount = window.db.accounts.find(acc =>
+        acc.email === userEmail &&
+        acc.password === userPassword &&
+        acc.verified === true
+    );
+
+    if (findAccount) {
+        // Save auth_token = email in localStorage
+        localStorage.setItem('auth_token', findAccount.email);
+
+        // Call `setAuthState(account) = true ,user
+        setAuthState(findAccount);
+
+        navigateTo('#/userProfile');
+        console.log("Login successful");
+    }
+}
+
+// logout function
+function logout() {
+    localStorage.removeItem('auth_token');
+    setAuthState(null);
+    navigateTo('#/login');
+}
+
+
 
