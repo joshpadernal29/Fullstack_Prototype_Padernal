@@ -9,11 +9,11 @@ function handleRouting() {
     console.log("location:" + hash);
     // select pages
     const pages = document.querySelectorAll(".page");
+    // select the alert class
+    const verifyAlert = document.getElementById("verified-alert") // only show when email is verified
 
     // hide pages
-    for (let i = 0; i < pages.length; i++) {
-        pages[i].style.display = 'none';
-    }
+    pages.forEach(page => page.classList.remove('active'));
 
     // switch between section id
     let sectionId;
@@ -21,17 +21,26 @@ function handleRouting() {
         sectionId = "home-page";
     } else if (hash === '#/register') {
         sectionId = "register-page";
-    } else if (hash === '#/login') {
+    } else if (hash.includes('#/login')) {
         sectionId = 'login-page';
     } else if (hash === '#/verify') {
         sectionId = 'verify-email';
     }
 
+    // show only when done with email verification
+    // check if the hash includes a query string before displaying the alert
+    if (verifyAlert) {
+        if (hash.includes('verified=true')) {
+            verifyAlert.style.display = 'block';
+        } else {
+            verifyAlert.style.display = 'none';
+        }
+    }
 
     // show page
     const activePage = document.getElementById(sectionId);
     if (activePage) {
-        activePage.style.display = 'block';
+        activePage.classList.add('active'); // add active to the class
     }
 }
 // set to default home page
@@ -85,6 +94,24 @@ function registration(event) {
         let userEmail = document.getElementById('email').value;
         document.getElementById('showEmail').innerText = inputEmail;
         navigateTo('#/verify');
+    }
+}
+
+// verify email
+function verifyEmail() {
+    const findEmail = localStorage.getItem('unverified_email');
+    const user = window.db.accounts.find(acc => acc.email = email);
+
+    // set the email verified to true
+    if (user) {
+        user.verified = true;
+
+        // save to local storage
+        localStorage.setItem("accounts", JSON.stringify(window.db.accounts));
+        localStorage.removeItem("unverified_email"); // remove the temp unvrified email
+        console.log("Account verified:" + findEmail);
+
+        navigateTo('#/login?verified=true');
     }
 }
 

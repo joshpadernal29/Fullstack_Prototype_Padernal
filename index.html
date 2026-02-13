@@ -92,11 +92,12 @@
                 <div class="card-body">
                     <h3>Verify Your Email</h3>
                     <hr>
-                    <div class="alert alert-success" role="alert">
+                    <div class="alert alert-success" role="alert" class="show-alert">
                         &#9989; A Verification has been sent to: <span id="showEmail"></span>
                     </div>
                     <p>For Demo purposes, Click below to simulate verification</p>
-                    <button type="button" class="btn btn-success">&#9989; Simulate Email Verification</button>
+                    <button type="button" class="btn btn-success" onclick="verifyEmail()">&#9989; Simulate Email
+                        Verification</button>
                     <button type="button" class="btn btn-outline-dark" onclick="navigateTo('#/login')">Go to
                         Login</button>
                 </div>
@@ -105,6 +106,9 @@
         <!--Login page-->
         <section id="login-page" class="page">
             <form>
+                <div class="alert alert-success" role="alert" id="verified-alert">
+                    &#9989; Email Verified you may now log in.
+                </div>
                 <div class="card">
                     <div class="card-body">
                         <h3>Login</h3>

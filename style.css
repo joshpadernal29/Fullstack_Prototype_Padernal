@@ -27,3 +27,16 @@ body.authenticated .role-logged-out {
 body.is-admin .role-admin {
     display: block;
 }
+
+/*show alert after login verification*/
+.show-alert {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+}
+
+/*hide alert default*/
+.show-alert.active {
+    display: none;
+    opacity: 1;
+}
