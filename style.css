@@ -8,22 +8,22 @@
     display: block;
 }
 
-/*for sections*/
+/*for not authenticate and logged in sections*/
 body.not-authenticated .role-logged-in {
     display: none;
 }
 
-/*for sections*/
+/*for logout sections*/
 body.authenticated .role-logged-out {
     display: none;
 }
 
-/*for sections*/
+/*for admin sections*/
 .role-admin {
     display: none;
 }
 
-/*for sections*/
+/*for admin sections*/
 body.is-admin .role-admin {
     display: block;
 }

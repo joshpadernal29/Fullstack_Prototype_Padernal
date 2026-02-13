@@ -1,33 +1,72 @@
 let currentUser = null;
+const STORAGE_KEY = "ipt_demo_v1";
+
+// save windwo.db data to local storage
+function saveToStorage() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(window.db));
+}
+
+// load data from the local storage
+function loadFromStorage() {
+    try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (data) {
+            window.db = JSON.parse(data);
+        } else {
+            throw new Error("No data");
+        }
+    } catch (e) {
+        // default data
+        window.db = {
+            accounts: [
+                {
+                    email: "admin@example.com",
+                    password: "Password123!",
+                    verified: true,
+                    role: "admin",
+                    Fname: "Admin",
+                    Lname: "Admin"
+                }
+            ],
+            departments: [
+                { id: 1, name: "Engineering" },
+                { id: 2, name: "HR" }
+            ]
+        };
+        saveToStorage();
+    }
+}
+loadFromStorage(); // initialize db
 
 function navigateTo(hash) {
     window.location.hash = hash;
 }
 
-// update body for logged as user or admin etc...
-function updateBody() {
-    const body = document.body;
-
+// setAuthState for logged as user or admin etc...
+function setAuthState(user) {
+    currentUser = user;
     // remove body class
+    const body = document.body;
     body.classList.remove('not-authenticated', 'authenticated', 'is-admin');
+
+    const NameDisplay = document.getElementById('nav-name-display');
 
     // if user log in
     if (currentUser) {
         // if current user = true
         body.classList.add('authenticated');
+        if (NameDisplay) {
+            NameDisplay.innerText = currentUser.Fname; // put user name in the navigation bar
+        }
         // if current user = admin add .is-admin
         if (currentUser.role === 'admin') {
             body.classList.add('is-admin')
         }
     } else {
         body.classList.add('not-authenticated');
+        localStorage.removeItem('auth_token');
     }
-}
 
-// setAuthstate
-function setAuthState(user) {
-    currentUser = user;
-    updateBody();
     handleRouting();
 }
 
@@ -75,26 +114,21 @@ function handleRouting() {
 // to stop being loged out incase of refresh
 window.addEventListener('load', () => {
     const token = localStorage.getItem('auth_token');
+    let found = null;
 
     if (token) {
-        const found = window.db.accounts.find(acc => acc.email === token);
-        if (found) {
-            currentUser = found;
-        }
+        found = window.db.accounts.find(acc => acc.email === token);
     }
 
-    updateBody();
-    handleRouting();
+    if (!window.location.hash || window.location.hash === "#") {
+        window.location.replace("#/");
+    }
+
+    setAuthState(found);
 });
 window.addEventListener('hashchange', handleRouting);
 
 // Authentication
-
-window.db = {
-    // intialize temp db
-    accounts: JSON.parse(localStorage.getItem('accounts')) || []
-};
-
 function registration(event) {
     event.preventDefault();
     // get input data
@@ -123,7 +157,7 @@ function registration(event) {
         window.db.accounts.push(newAccount);
 
         //save to local storage
-        localStorage.setItem('accounts', JSON.stringify(window.db.accounts));
+        saveToStorage();
         localStorage.setItem('unverified_email', inputEmail);
 
         let userEmail = document.getElementById('email').value;
@@ -142,7 +176,7 @@ function verifyEmail() {
         user.verified = true;
 
         // save to local storage
-        localStorage.setItem("accounts", JSON.stringify(window.db.accounts));
+        saveToStorage();
         localStorage.removeItem("unverified_email"); // remove the temp unvrified email
         console.log("Account verified:" + findEmail);
 
@@ -174,6 +208,8 @@ function login(event) {
 
         navigateTo('#/userProfile');
         console.log("Login successful");
+    } else {
+        alert("Invalid Email and password!");
     }
 }
 

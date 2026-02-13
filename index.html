@@ -17,26 +17,28 @@
             <a class="navbar-brand" href="#/">Full Stack App (Josh Efraim C. Padernal)</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto">
-                    <!-- Admin Only Links -->
+                    <!-- Admin Only Links correctly using-->
                     <li class="nav-item role-admin"><a class="nav-link" href="#/employees">Employees</a></li>
                     <li class="nav-item role-admin"><a class="nav-link" href="#/accounts">Accounts</a></li>
                     <li class="nav-item role-admin"><a class="nav-link" href="#/departments">Departments</a></li>
                 </ul>
-                <ul class="navbar-nav">
-                    <!-- Logged Out -->
+                <ul class="navbar-nav ms-auto flex-column">
+                    <!-- Visible only when NOT logged in -->
                     <li class="nav-item role-logged-out"><a class="nav-link" href="#/login">Login</a></li>
                     <li class="nav-item role-logged-out"><a class="nav-link" href="#/register">Register</a></li>
-                    <!-- Logged In -->
+
+                    <!--  Visible only when LOGGED in -->
                     <li class="nav-item dropdown role-logged-in">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDrop" data-bs-toggle="dropdown">User</a>
+                        <a class="nav-link dropdown-toggle" href="#" id="userDrop" data-bs-toggle="dropdown">
+                            <span id="nav-name-display">User</span>
+                        </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#/userProfile">Profile</a></li>
                             <li><a class="dropdown-item" href="#/requests">My Requests</a></li>
                             <li>
                                 <hr>
                             </li>
-                            <li><button class="dropdown-item" class="btn-outline-danger"
-                                    onclick="logout()">Logout</button></li>
+                            <li><button class="dropdown-item text-danger" onclick="logout()">Logout</button></li>
                         </ul>
                     </li>
                 </ul>
