@@ -32,9 +32,7 @@ function loadFromStorage() {
                 { id: 1, name: "Engineering", description: "software team" },
                 { id: 2, name: "HR", description: "Human resources" }
             ],
-            employees: [
-
-            ]
+            employees: []
         };
         saveToStorage();
     }
@@ -114,7 +112,8 @@ function handleRouting() {
         sectionId = 'profile';
     } else if (hash === '#/employees') {
         sectionId = 'employees';
-        //renderEmployees();
+        renderEmployees();
+        populateDeptDropdown();
     } else if (hash === '#/departments') {
         sectionId = 'departments';
         renderDepartments();
@@ -300,7 +299,7 @@ function renderAccounts() {
                 <div class="btn-group btn-group-sm">
                     <button class="btn btn-outline-primary" data-bs-toggle="modal"
                         data-bs-target="#account-modal")" onclick="openEditAccount('${acc.email}')">Edit</button>
-                    <button class="btn btn-outline-warning" onclick="resetPassword('${acc.email}')">PW</button>
+                    <button class="btn btn-outline-warning" onclick="resetPassword('${acc.email}')">Reset Password</button>
                     <button class="btn btn-outline-danger" ${isSelf ? 'disabled' : ''} onclick="deleteAccount('${acc.email}')">Delete</button>
                 </div>
             </td>
@@ -309,7 +308,7 @@ function renderAccounts() {
     });
 }
 
-// edit account
+// edit & and populate account
 let editingEmail = null;
 
 window.openEditAccount = function (email) {
@@ -336,27 +335,143 @@ window.openEditAccount = function (email) {
     modalInst.show();
 };
 
+// password reset(account)
+window.resetPassword = function (email) {
+    // Ask for the new password
+    const newPw = prompt(`Enter new password for ${email} (Minimum 6 characters):`);
+
+    // If user clicks "Cancel", newPw will be null
+    if (newPw === null) return;
+
+    // Validation
+    if (newPw.trim().length < 6) {
+        alert("Error: Password is too short! It must be at least 6 characters.");
+    } else {
+        // 4. Find account and update
+        const acc = window.db.accounts.find(a => a.email === email);
+        if (acc) {
+            acc.password = newPw;
+            saveToStorage(); // Sync with localStorage
+            alert("Password updated successfully!");
+        }
+    }
+};
+
+// delete account (account)
+window.deleteAccount = function (email) {
+    // 1. Prevent self-deletion (Double Check)
+    if (currentUser && email === currentUser.email) {
+        alert("You cannot delete your own account while logged in.");
+        return;
+    }
+
+    // Confirm action
+    const confirmed = confirm(`Are you sure you want to permanently delete the account: ${email}?`);
+
+    if (confirmed) {
+        //  Filter out the account
+        window.db.accounts = window.db.accounts.filter(acc => acc.email !== email);
+
+        //  Save and Update
+        saveToStorage();
+        renderAccounts();
+        alert("Account deleted.");
+    }
+};
+
 
 
 // render employees
 function renderEmployees() {
     const tableBody = document.getElementById('employee-table-body');
     if (!tableBody) return;
+
     tableBody.innerHTML = '';
 
-    window.db.employees.forEach((emp) => {
-        const user = window.db.accounts.find(acc => acc.email === emp.userEmail);
-        const dept = window.db.departments.find(dept => dept.id == emp.deptId);
+    window.db.employees.forEach(emp => {
+        // "Join" data from accounts and departments
+        const account = window.db.accounts.find(a => a.email === emp.userEmail);
+        const dept = window.db.departments.find(d => d.id == emp.deptId);
 
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${emp.employeeId}</td>
-            <td>${user ? user.Fname + ' ' + user.Lname : emp.userEmail}</td>
+            <td>
+                <b>${account ? account.Fname + ' ' + account.Lname : 'Unknown'}</b><br>
+                <small class="text-muted">${emp.userEmail}</small>
+            </td>
             <td>${emp.position}</td>
             <td>${dept ? dept.name : 'N/A'}</td>
             <td>
-                <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.employeeId}')">Delete</button>
-            </td>`;
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee('${emp.employeeId}')">Remove</button>
+            </td>
+        `;
         tableBody.appendChild(row);
     });
 }
+
+// POPULATE DEPT DROPDOWN
+function populateDeptDropdown() {
+    const deptSelect = document.getElementById('employeeDepartment');
+    if (!deptSelect) return;
+    // loop through the departments db to get departments
+    window.db.departments.forEach(dept => {
+        const opt = document.createElement('option');
+        opt.value = dept.id;
+        opt.textContent = dept.name;
+        deptSelect.appendChild(opt);
+    });
+}
+
+// FORM Empoyee
+window.saveEmployee = function () {
+    // get values from the input
+    const empId = document.getElementById('employeeId').value;
+    const email = document.getElementById('employeeEmail').value;
+    const pos = document.getElementById('employeePosition').value;
+    const dept = document.getElementById('employeeDepartment').value;
+    const hireDate = document.getElementById('hire-date')?.value || "";
+
+    if (!empId || !email || !pos || !dept || !hireDate) {
+        alert("Please fill in all required fields.");
+        return;
+    }
+
+    // 3. Validation: Check if the User Email exists in accounts
+    const accountExists = window.db.accounts.some(acc => acc.email === email);
+    if (!accountExists) {
+        alert("Error: No account found with this email. Create the account first.");
+        return;
+    }
+
+    // 4. Create the new Employee object
+    const newEmp = {
+        employeeId: empId,
+        userEmail: email,
+        position: pos,
+        deptId: dept,
+        hireDate: hireDate
+    };
+
+    // Save to database
+    window.db.employees.push(newEmp);
+    saveToStorage();
+    renderEmployees();
+
+    //Close Modal and Reset Form
+    const modalEl = document.getElementById('employee-modal');
+    const modalInst = bootstrap.Modal.getInstance(modalEl);
+    if (modalInst) modalInst.hide();
+
+    document.getElementById('employeeForm').reset();
+    alert("Employee saved successfully!");
+};
+
+// DELETE EMPLOYEE
+window.deleteEmployee = function (id) {
+    if (confirm("Permanently remove this employee record?")) {
+        window.db.employees = window.db.employees.filter(e => e.employeeId !== id);
+        saveToStorage();
+        renderEmployees();
+    }
+};
