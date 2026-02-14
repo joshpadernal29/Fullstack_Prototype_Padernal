@@ -135,29 +135,161 @@
                 <h3>My Profile</h3>
                 <div class="card">
                     <div class="card-body">
-                        <h6><b>Admin user</b></h6>
+                        <h6><b><span id="profile-class">Admin</span>:</b> <span id="profile-name">user</span></h6>
                         <hr>
-                        <p><b>Email:</b> admin@gmail.com</p>
-                        <p><b>Role:</b> Admin</p>
+                        <p><b>Email:</b> <span id="profile-email">admin@gmail.com</span></p>
+                        <p><b>Role:</b> <span id="profile-role">Admin</span></p>
                         <br>
-                        <button type="button" class="btn btn-outline-primary">Edit Profile</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="editProfile()">Edit
+                            Profile</button>
                     </div>
                 </div>
             </div>
         </section>
-
+        <!--employees page-->
         <section id="employees" class="page">
-
+            <div class="row">
+                <div class="col">
+                    <h3>Employees</h3>
+                </div>
+                <div class="col-6"></div>
+                <div class="col"><button type="button" class="btn btn-success">+ Add Employee</button></div>
+            </div>
+            <hr>
+            <div class="container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th><b>ID</b></th>
+                            <th><b>NAME</b></th>
+                            <th><b>POSITION</b></th>
+                            <th><b>DEPT</b></th>
+                            <th><b>ACTION</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>test</td>
+                            <td>xxx</td>
+                            <td>yyy</td>
+                            <td>=></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
-
+        <!--departments page-->
         <section id="departments" class="page">
-
+            <div class="row">
+                <div class="col">
+                    <h3>Departments</h3>
+                </div>
+                <div class="col-6"></div>
+                <div class="col"><button type="button" class="btn btn-success" onclick="alert('Not Implimented yet')">+
+                        Add
+                        Department</button></div>
+            </div>
+            <hr>
+            <div class="container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th><b>NAME</b></th>
+                            <th><b>DESCRIPION</b></th>
+                            <th><b>ACTION</b></th>
+                        </tr>
+                    </thead>
+                    <tbody id="department-table-body">
+                        <!--loop in js-->
+                    </tbody>
+                </table>
+            </div>
         </section>
-
+        <!--Accounts page-->
         <section id="accounts" class="page">
+            <div class="row">
+                <div class="col">
+                    <h3>Accounts</h3>
+                </div>
+                <div class="col-6"></div>
+                <div class="col"><button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#account-modal">+ Add
+                        Account</button></div>
+            </div>
+            <hr>
+            <div class="container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th><b>ID</b></th>
+                            <th><b>NAME</b></th>
+                            <th><b>POSITION</b></th>
+                            <th><b>DEPT</b></th>
+                            <th><b>ACTION</b></th>
+                        </tr>
+                    </thead>
+                    <tbody id="account-table-body">
+                        <tr>
+                            <td>1</td>
+                            <td>test</td>
+                            <td>xxx</td>
+                            <td>yyy</td>
+                            <td>=></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
+            <!--account modal form-->
+            <div class="modal fade" id="account-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Account Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="accountForm">
+                                <div class="mb-3">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="fname" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="lname" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Role</label>
+                                    <select class="form-select" id="role">
+                                        <option value="User">User</option>
+                                        <option value="Admin">Admin</option>
+                                    </select>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="isVerified">
+                                    <label class="form-check-label" for="isVerified"><b>Verified</b></label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-ouline-secondary"
+                                data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" form="accountForm" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
-
+        <!--request page-->
         <section id="requests" class="page">
 
         </section>

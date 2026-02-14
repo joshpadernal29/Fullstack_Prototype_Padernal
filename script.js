@@ -25,12 +25,12 @@ function loadFromStorage() {
                     verified: true,
                     role: "admin",
                     Fname: "Admin",
-                    Lname: "Admin"
+                    Lname: "123"
                 }
             ],
             departments: [
-                { id: 1, name: "Engineering" },
-                { id: 2, name: "HR" }
+                { id: 1, name: "Engineering", description: "software team" },
+                { id: 2, name: "HR", description: "Human resources" }
             ]
         };
         saveToStorage();
@@ -42,6 +42,25 @@ function navigateTo(hash) {
     window.location.hash = hash;
 }
 
+// render profile whne use navigates to profile
+function renderProfile() {
+    const NameDisplay = document.getElementById('nav-name-display');
+    const profileClass = document.getElementById('profile-class');
+    const profileName = document.getElementById('profile-name');
+    const profileEmail = document.getElementById('profile-email');
+    const profileRole = document.getElementById('profile-role');
+
+    if (NameDisplay) {
+        NameDisplay.innerText = currentUser.Fname; // put user name in the navigation bar
+        profileClass.innerText = currentUser.role;
+        profileName.innerText = currentUser.Fname + " " + currentUser.Lname;
+        profileEmail.innerText = currentUser.email;
+        profileRole.innerText = currentUser.role;
+    }
+
+}
+
+
 // setAuthState for logged as user or admin etc...
 function setAuthState(user) {
     currentUser = user;
@@ -49,15 +68,12 @@ function setAuthState(user) {
     const body = document.body;
     body.classList.remove('not-authenticated', 'authenticated', 'is-admin');
 
-    const NameDisplay = document.getElementById('nav-name-display');
 
     // if user log in
     if (currentUser) {
         // if current user = true
         body.classList.add('authenticated');
-        if (NameDisplay) {
-            NameDisplay.innerText = currentUser.Fname; // put user name in the navigation bar
-        }
+        renderProfile(); // render current user profile
         // if current user = admin add .is-admin
         if (currentUser.role === 'admin') {
             body.classList.add('is-admin')
@@ -93,6 +109,15 @@ function handleRouting() {
         sectionId = 'verify-email';
     } else if (hash === '#/userProfile') {
         sectionId = 'profile';
+    } else if (hash === '#/employees') {
+        sectionId = 'employees';
+    } else if (hash === '#/departments') {
+        sectionId = 'departments';
+        renderDepartments(); // render department
+    } else if (hash === '#/accounts') {
+        sectionId = 'accounts';
+    } else if (hash === '#/request') {
+        sectionId = 'requests';
     }
 
     // show only when done with email verification
@@ -220,5 +245,34 @@ function logout() {
     navigateTo('#/login');
 }
 
+// edit profile
+function editProfile() {
+    alert("changed to Edit profile page!");
+}
+
+// read department table
+function renderDepartments() {
+    const tableBody = document.getElementById('department-table-body');
+    if (!tableBody) return;
+
+    // Clear existing static rows
+    tableBody.innerHTML = '';
+
+    // Loop through window.db.departments
+    window.db.departments.forEach((dept) => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${dept.name}</td>
+            <td>${dept.description || 'No description available'}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-primary" onclick="editDepartment(${dept.id})">Edit</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="deleteDepartment(${dept.id})">Delete</button>
+            </td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
 
 
