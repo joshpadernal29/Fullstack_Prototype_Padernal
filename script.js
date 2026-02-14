@@ -114,7 +114,7 @@ function handleRouting() {
         sectionId = 'profile';
     } else if (hash === '#/employees') {
         sectionId = 'employees';
-        renderEmployees();
+        //renderEmployees();
     } else if (hash === '#/departments') {
         sectionId = 'departments';
         renderDepartments();
@@ -299,7 +299,7 @@ function renderAccounts() {
             <td>
                 <div class="btn-group btn-group-sm">
                     <button class="btn btn-outline-primary" data-bs-toggle="modal"
-                        data-bs-target="#account-modal")">Edit</button>
+                        data-bs-target="#account-modal")" onclick="openEditAccount('${acc.email}')">Edit</button>
                     <button class="btn btn-outline-warning" onclick="resetPassword('${acc.email}')">PW</button>
                     <button class="btn btn-outline-danger" ${isSelf ? 'disabled' : ''} onclick="deleteAccount('${acc.email}')">Delete</button>
                 </div>
@@ -309,32 +309,54 @@ function renderAccounts() {
     });
 }
 
+// edit account
+let editingEmail = null;
+
+window.openEditAccount = function (email) {
+    const acc = window.db.accounts.find(a => a.email === email);
+    if (!acc) return;
+
+    editingEmail = email; // Mark as editing
+
+    // Fill inputs using IDs from your HTML
+    document.getElementById('accFname').value = acc.Fname;
+    document.getElementById('accLname').value = acc.Lname;
+    document.getElementById('accEmail').value = acc.email;
+    document.getElementById('accEmail').readOnly = true; // Email is the unique key
+    document.getElementById('accPassword').value = acc.password;
+    document.getElementById('accRole').value = acc.role;
+    document.getElementById('isVerified').checked = !!acc.verified;
+
+    // Change Modal UI
+    document.querySelector('#account-modal .modal-title').innerText = "Edit Account";
+
+    // Show Modal manually (prevents hanging)
+    const modalEl = document.getElementById('account-modal');
+    const modalInst = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modalInst.show();
+};
+
+
+
 // render employees
 function renderEmployees() {
     const tableBody = document.getElementById('employee-table-body');
     if (!tableBody) return;
-
     tableBody.innerHTML = '';
 
     window.db.employees.forEach((emp) => {
-        // Find linked data
-        const user = window.db.accounts.find(a => a.email === emp.userEmail);
-        const dept = window.db.departments.find(d => d.id == emp.deptId);
+        const user = window.db.accounts.find(acc => acc.email === emp.userEmail);
+        const dept = window.db.departments.find(dept => dept.id == emp.deptId);
 
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${emp.employeeId}</td>
-            <td>
-                <b>${user ? user.Fname + ' ' + user.Lname : 'Unknown'}</b><br>
-                <small>${emp.userEmail}</small>
-            </td>
+            <td>${user ? user.Fname + ' ' + user.Lname : emp.userEmail}</td>
             <td>${emp.position}</td>
             <td>${dept ? dept.name : 'N/A'}</td>
             <td>
-                <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.employeeId}')">Remove</button>
-            </td>
-        `;
+                <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.employeeId}')">Delete</button>
+            </td>`;
         tableBody.appendChild(row);
     });
 }
-
