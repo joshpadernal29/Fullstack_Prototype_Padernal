@@ -31,6 +31,9 @@ function loadFromStorage() {
             departments: [
                 { id: 1, name: "Engineering", description: "software team" },
                 { id: 2, name: "HR", description: "Human resources" }
+            ],
+            employees: [
+
             ]
         };
         saveToStorage();
@@ -111,11 +114,13 @@ function handleRouting() {
         sectionId = 'profile';
     } else if (hash === '#/employees') {
         sectionId = 'employees';
+        renderEmployees();
     } else if (hash === '#/departments') {
         sectionId = 'departments';
-        renderDepartments(); // render department
+        renderDepartments();
     } else if (hash === '#/accounts') {
         sectionId = 'accounts';
+        renderAccounts();
     } else if (hash === '#/request') {
         sectionId = 'requests';
     }
@@ -275,4 +280,61 @@ function renderDepartments() {
     });
 }
 
+// render accounts
+function renderAccounts() {
+    const tableBody = document.getElementById('account-table-body');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = '';
+
+    window.db.accounts.forEach((acc, index) => {
+        const isSelf = currentUser && acc.email === currentUser.email;
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${acc.Fname} ${acc.Lname}<br><small class="text-muted">${acc.email}</small></td>
+            <td><span class="badge bg-secondary">${acc.role}</span></td>
+            <td>${acc.verified ? '<span class="text-success">&#9989;</span>' : '<span class="text-danger">&#x2715;</span>'}</td>
+            <td>
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal"
+                        data-bs-target="#account-modal")">Edit</button>
+                    <button class="btn btn-outline-warning" onclick="resetPassword('${acc.email}')">PW</button>
+                    <button class="btn btn-outline-danger" ${isSelf ? 'disabled' : ''} onclick="deleteAccount('${acc.email}')">Delete</button>
+                </div>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// render employees
+function renderEmployees() {
+    const tableBody = document.getElementById('employee-table-body');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = '';
+
+    window.db.employees.forEach((emp) => {
+        // Find linked data
+        const user = window.db.accounts.find(a => a.email === emp.userEmail);
+        const dept = window.db.departments.find(d => d.id == emp.deptId);
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${emp.employeeId}</td>
+            <td>
+                <b>${user ? user.Fname + ' ' + user.Lname : 'Unknown'}</b><br>
+                <small>${emp.userEmail}</small>
+            </td>
+            <td>${emp.position}</td>
+            <td>${dept ? dept.name : 'N/A'}</td>
+            <td>
+                <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.employeeId}')">Remove</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
 
