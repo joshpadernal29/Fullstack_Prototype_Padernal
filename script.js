@@ -32,7 +32,8 @@ function loadFromStorage() {
                 { id: 1, name: "Engineering", description: "software team" },
                 { id: 2, name: "HR", description: "Human resources" }
             ],
-            employees: []
+            employees: [],
+            requests: []
         };
         saveToStorage();
     }
@@ -122,6 +123,7 @@ function handleRouting() {
         renderAccounts();
     } else if (hash === '#/request') {
         sectionId = 'requests';
+        renderRequests();
     }
 
     // show only when done with email verification
@@ -379,8 +381,6 @@ window.deleteAccount = function (email) {
     }
 };
 
-
-
 // render employees
 function renderEmployees() {
     const tableBody = document.getElementById('employee-table-body');
@@ -389,7 +389,7 @@ function renderEmployees() {
     tableBody.innerHTML = '';
 
     window.db.employees.forEach(emp => {
-        // "Join" data from accounts and departments
+        // Join data from accounts and departments
         const account = window.db.accounts.find(a => a.email === emp.userEmail);
         const dept = window.db.departments.find(d => d.id == emp.deptId);
 
@@ -475,3 +475,157 @@ window.deleteEmployee = function (id) {
         renderEmployees();
     }
 };
+
+// for status badges
+function getStatusBadge(status) {
+    if (status === 'Approved') return 'bg-success';
+    if (status === 'Rejected') return 'bg-danger';
+    return 'bg-warning text-dark';
+}
+
+// render request page
+window.renderRequests = function () {
+    const userView = document.getElementById('user-request-view');
+    const adminView = document.getElementById('admin-request-view');
+    const emptyView = document.getElementById('empty-request-view');
+    const tableView = document.getElementById('table-request-view');
+    const userTable = document.getElementById('user-request-table');
+    const adminTable = document.getElementById('admin-request-table');
+
+    if (!emptyView || !tableView || !currentUser) return;
+    // Admin view
+    if (currentUser.role === 'admin') {
+        userView.style.display = 'none';
+        adminView.style.display = 'block';
+
+        const allRequests = window.db.requests || [];
+        adminTable.innerHTML = '';
+
+        allRequests.forEach(req => {
+            const badge = getStatusBadge(req.status);
+            const items = req.items.map(i => `${i.name} (x${i.qty})`).join(', ');
+
+            const row = `<tr>
+                <td><small>${req.employeeEmail}</small></td>
+                <td>${req.date}</td>
+                <td>${req.type}</td>
+                <td>${items}</td>
+                <td><span class="badge ${badge}">${req.status}</span></td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-success" onclick="processRequest(${req.id}, 'Approved')" 
+                            ${req.status !== 'Pending' ? 'disabled' : ''}>Approve</button>
+                        <button class="btn btn-danger" onclick="processRequest(${req.id}, 'Rejected')" 
+                            ${req.status !== 'Pending' ? 'disabled' : ''}>Reject</button>
+                    </div>
+                </td>
+            </tr>`;
+            adminTable.insertAdjacentHTML('beforeend', row);
+        });
+    } else {
+        // user view
+        adminView.style.display = 'none';
+        userView.style.display = 'block';
+
+        const userRequest = (window.db.requests || []).filter(request => request.employeeEmail === currentUser.email);
+
+        if (userRequest.length === 0) {
+            emptyView.style.display = 'block';
+            tableView.style.display = 'none';
+        } else {
+            emptyView.style.display = 'none';
+            tableView.style.display = 'block';
+            userTable.innerHTML = '';
+
+            userRequest.forEach(req => {
+                const badge = getStatusBadge(req.status);
+                const items = req.items.map(item => `${item.name} (x${item.qty})`).join(', ');
+                const row = `<tr>
+                    <td>${req.date}</td>
+                    <td>${req.type}</td>
+                    <td>${items}</td>
+                    <td><span class="badge ${badge}">${req.status}</span></td>
+                </tr>`;
+                userTable.insertAdjacentHTML('beforeend', row);
+            });
+        }
+    }
+};
+
+// Admin:Approve/Reject
+window.processRequest = function (id, newStatus) {
+    const req = window.db.requests.find(request => request.id === id);
+    if (req) {
+        req.status = newStatus;
+        saveToStorage();
+        renderRequests();
+    }
+};
+
+// dynamic item row
+window.addRequestItemRow = function () {
+    const container = document.getElementById('dynamic-items-container');
+    const rowId = Date.now();
+    // insert request item
+    const html = `
+        <div class="row g-2 mb-2 align-items-center" id="row-${rowId}">
+            <div class="col-8">
+                <input type="text" class="form-control form-control-sm item-name" placeholder="Item Name" required>
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control form-control-sm item-qty" value="1" min="1">
+            </div>
+            <div class="col-1 text-end">
+                <button type="button" class="btn-close" style="font-size:0.6rem" onclick="document.getElementById('row-${rowId}').remove()"></button>
+            </div>
+        </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+};
+
+window.openRequestModal = function () {
+    const container = document.getElementById('dynamic-items-container');
+    container.querySelectorAll('.row').forEach(row => row.remove());
+
+    addRequestItemRow();
+
+    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('request-modal'));
+    modal.show();
+};
+
+// request submit
+const requestForm = document.getElementById('requestForm');
+if (requestForm) {
+    requestForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const names = document.querySelectorAll('.item-name');
+        const qtys = document.querySelectorAll('.item-qty');
+        const items = [];
+
+        names.forEach((input, i) => {
+            if (input.value.trim() !== "") {
+                items.push({ name: input.value.trim(), qty: qtys[i].value });
+            }
+        });
+
+        if (items.length === 0) return alert("Please add at least one item.");
+
+        const newRequest = {
+            id: Date.now(),
+            type: document.getElementById('requestType').value,
+            items: items,
+            status: "Pending",
+            date: new Date().toLocaleDateString(),
+            employeeEmail: currentUser.email
+        };
+
+        if (!window.db.requests) window.db.requests = [];
+        window.db.requests.push(newRequest);
+
+        saveToStorage();
+        renderRequests();
+
+        bootstrap.Modal.getInstance(document.getElementById('request-modal')).hide();
+        this.reset();
+    });
+}

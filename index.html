@@ -34,7 +34,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="#/userProfile">Profile</a></li>
-                            <li><a class="dropdown-item" href="#/requests">My Requests</a></li>
+                            <li><a class="dropdown-item" href="#/request">My Requests</a></li>
                             <li>
                                 <hr>
                             </li>
@@ -273,7 +273,6 @@
                     </tbody>
                 </table>
             </div>
-
             <!--account modal form-->
             <div class="modal fade" id="account-modal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -324,7 +323,102 @@
         </section>
         <!--request page-->
         <section id="requests" class="page">
+            <div class="row">
+                <div class="col">
+                    <h3>Requests</h3>
+                </div>
+                <div class="col-6"></div>
+                <div class="col"><button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#request-modal">+ New Request</button></div>
+            </div>
+            <hr>
+            <div class="container">
+                <div id="empty-request-view" style="display: none;">
+                    <div>
+                        <p>You have no request yet...</p>
+                        <button type="button" class="btn btn-success" onclick="openRequestModal()">Create One</button>
+                    </div>
+                </div>
 
+                <!-- View 2: Shown when requests.length > 0 -->
+                <div id="user-request-view" style="display: none;">
+                    <!-- user view-->
+                    <div id="table-request-view" style="display: none;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Items</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-request-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!--admin view-->
+                <div id="admin-request-view" style="display: none;">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <h4>Manage All Employee Requests</h4>
+                        </div>
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Employee</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Items</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-request-table">
+                            <!--loop in JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <!--request modal-->
+            <div class="modal fade" id="request-modal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">New Request</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="requestForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Type</label>
+                                    <select class="form-select" id="requestType">
+                                        <option value="equipment">Equipment</option>
+                                        <option value="leave">Leave</option>
+                                        <option value="resources">Resources</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="dynamic-items" id="dynamic-items-container">
+                                        <label>
+                                            Items
+                                            <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none"
+                                                onclick="addRequestItemRow()">+ Add Item</button>
+                                        </label>
+                                        <!--loop in js-->
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" form="requestForm" class="btn btn-primary">Submit Request</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
     <!--end of main-->
