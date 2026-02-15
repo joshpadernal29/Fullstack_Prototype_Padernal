@@ -329,14 +329,15 @@
                 </div>
                 <div class="col-6"></div>
                 <div class="col"><button type="button" class="btn btn-success" data-bs-toggle="modal"
-                        data-bs-target="#request-modal">+ New Request</button></div>
+                        data-bs-target="#request-modal" id="request-add">+ New Request</button></div>
             </div>
             <hr>
             <div class="container">
                 <div id="empty-request-view" style="display: none;">
                     <div>
                         <p>You have no request yet...</p>
-                        <button type="button" class="btn btn-success" onclick="openRequestModal()">Create One</button>
+                        <button type="button" class="btn btn-success" onclick="openRequestModal()"
+                            id="request-add">Create One</button>
                     </div>
                 </div>
 

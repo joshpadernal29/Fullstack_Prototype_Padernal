@@ -491,19 +491,21 @@ window.renderRequests = function () {
     const tableView = document.getElementById('table-request-view');
     const userTable = document.getElementById('user-request-table');
     const adminTable = document.getElementById('admin-request-table');
+    const hideRequest = document.getElementById('request-add');
 
     if (!emptyView || !tableView || !currentUser) return;
     // Admin view
     if (currentUser.role === 'admin') {
         userView.style.display = 'none';
         adminView.style.display = 'block';
+        hideRequest.style.display = 'none';
 
         const allRequests = window.db.requests || [];
         adminTable.innerHTML = '';
 
         allRequests.forEach(req => {
             const badge = getStatusBadge(req.status);
-            const items = req.items.map(i => `${i.name} (x${i.qty})`).join(', ');
+            const items = req.items.map(item => `${item.name} (x${item.qty})`).join(', ');
 
             const row = `<tr>
                 <td><small>${req.employeeEmail}</small></td>
