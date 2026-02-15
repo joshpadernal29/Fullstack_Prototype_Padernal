@@ -1,5 +1,7 @@
 let currentUser = null;
 const STORAGE_KEY = "ipt_demo_v1";
+const login_hash = ['#/userProfile', '#/request'];
+const admin_hash = ['#/accounts', '#/employees', '#/departments'];
 
 // save windwo.db data to local storage
 function saveToStorage() {
@@ -91,6 +93,20 @@ function setAuthState(user) {
 function handleRouting() {
     const hash = window.location.hash || '#/';
     console.log("location:" + hash);
+
+    // cant access other pages without login
+    if ((login_hash.includes(hash) || admin_hash.includes(hash)) && !currentUser) {
+        navigateTo('#/');
+        return;
+    }
+
+    // cant acces admin pages if not admin role
+    if (admin_hash.includes(hash) && currentUser.role !== 'admin') {
+        navigateTo('#/userProfile');
+        return;
+    }
+
+
     // select pages
     const pages = document.querySelectorAll(".page");
     // select the alert class
@@ -248,7 +264,7 @@ function login(event) {
 function logout() {
     localStorage.removeItem('auth_token');
     setAuthState(null);
-    navigateTo('#/login');
+    navigateTo('#/');
 }
 
 // edit profile
@@ -331,7 +347,7 @@ window.openEditAccount = function (email) {
     // Change Modal UI
     document.querySelector('#account-modal .modal-title').innerText = "Edit Account";
 
-    // Show Modal manually (prevents hanging)
+    // Show Modal manually (stop hanging)
     const modalEl = document.getElementById('account-modal');
     const modalInst = bootstrap.Modal.getOrCreateInstance(modalEl);
     modalInst.show();

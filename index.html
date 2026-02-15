@@ -16,23 +16,19 @@
         <div class="container">
             <a class="navbar-brand" href="#/">Full Stack App (Josh Efraim C. Padernal)</a>
             <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <!-- Admin Only Links correctly using-->
-                    <li class="nav-item role-admin"><a class="nav-link" href="#/employees">Employees</a></li>
-                    <li class="nav-item role-admin"><a class="nav-link" href="#/accounts">Accounts</a></li>
-                    <li class="nav-item role-admin"><a class="nav-link" href="#/departments">Departments</a></li>
-                </ul>
                 <ul class="navbar-nav ms-auto flex-column">
-                    <!-- Visible only when NOT logged in -->
+                    <!-- Visible when NOT logged in -->
                     <li class="nav-item role-logged-out"><a class="nav-link" href="#/login">Login</a></li>
                     <li class="nav-item role-logged-out"><a class="nav-link" href="#/register">Register</a></li>
-
-                    <!--  Visible only when LOGGED in -->
+                    <!--  Visible when LOGGED in -->
                     <li class="nav-item dropdown role-logged-in">
                         <a class="nav-link dropdown-toggle" href="#" id="userDrop" data-bs-toggle="dropdown">
                             <span id="nav-name-display">User</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item role-admin" href="#/employees">Employees</a></li>
+                            <li><a class="dropdown-item role-admin" href="#/accounts">Accounts</a></li>
+                            <li><a class="dropdown-item role-admin" href="#/departments">Departments</a></li>
                             <li><a class="dropdown-item" href="#/userProfile">Profile</a></li>
                             <li><a class="dropdown-item" href="#/request">My Requests</a></li>
                             <li>

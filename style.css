@@ -10,22 +10,26 @@
 
 /*for not authenticate and logged in sections*/
 body.not-authenticated .role-logged-in {
-    display: none;
+    display: none !important;
+    ;
 }
 
 /*for logout sections*/
 body.authenticated .role-logged-out {
-    display: none;
+    display: none !important;
+    ;
 }
 
 /*for admin sections*/
 .role-admin {
-    display: none;
+    display: none !important;
+    ;
 }
 
 /*for admin sections*/
 body.is-admin .role-admin {
-    display: block;
+    display: block !important;
+    ;
 }
 
 /*show alert after login verification*/
