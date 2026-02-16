@@ -186,9 +186,11 @@ function registration(event) {
 
     // check if email already exist in window.db.accounts
     const emailExist = window.db.accounts.some(acc => acc.email === inputEmail);
-    // check if email already exists
+    // check if email already exists || password must be >= 6
     if (emailExist) {
         alert("Email already Exists!");
+    } else if (inputPassword.length < 6) {
+        alert("Password Must be 6 or more characters!");
     } else {
         // save new account 
         const newAccount = {
@@ -426,7 +428,7 @@ function renderEmployees() {
     });
 }
 
-// POPULATE DEPT DROPDOWN
+// populate Department dropwdown
 function populateDeptDropdown() {
     const deptSelect = document.getElementById('employeeDepartment');
     if (!deptSelect) return;
@@ -439,7 +441,7 @@ function populateDeptDropdown() {
     });
 }
 
-// FORM Empoyee
+// employee form
 window.saveEmployee = function () {
     // get values from the input
     const empId = document.getElementById('employeeId').value;
@@ -453,14 +455,14 @@ window.saveEmployee = function () {
         return;
     }
 
-    // 3. Validation: Check if the User Email exists in accounts
+    // Check if the User Email exists in accounts
     const accountExists = window.db.accounts.some(acc => acc.email === email);
     if (!accountExists) {
         alert("Error: No account found with this email. Create the account first.");
         return;
     }
 
-    // 4. Create the new Employee object
+    // Create new Employee 
     const newEmp = {
         employeeId: empId,
         userEmail: email,
@@ -483,7 +485,7 @@ window.saveEmployee = function () {
     alert("Employee saved successfully!");
 };
 
-// DELETE EMPLOYEE
+// delete employee
 window.deleteEmployee = function (id) {
     if (confirm("Permanently remove this employee record?")) {
         window.db.employees = window.db.employees.filter(e => e.employeeId !== id);
