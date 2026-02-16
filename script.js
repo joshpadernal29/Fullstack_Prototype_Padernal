@@ -215,6 +215,53 @@ function registration(event) {
     }
 }
 
+// adding account via admin account page 
+function addAccount(event) {
+    //event.preventDefault();
+    const accFname = document.getElementById('accFname').value;
+    const accLname = document.getElementById('accLname').value;
+    const accEmail = document.getElementById('accEmail').value;
+    const accPassword = document.getElementById('accPassword').value;
+    const accRole = document.getElementById('accRole').value;
+    const isVerified = document.getElementById('isVerified').checked;
+
+    // check if email already exist in window.db.accounts
+    const emailExist = window.db.accounts.some(acc => acc.email === accEmail);
+    // check if email already exists || password must be >= 6
+    if (emailExist) {
+        alert("Email already Exists!");
+    } else if (accPassword.length < 6) {
+        alert("Password Must be 6 or more characters!");
+    } else {
+        // save new account 
+        const newAccount = {
+            Fname: accFname,
+            Lname: accLname,
+            email: accEmail,
+            password: accPassword,
+            verified: isVerified,
+            role: accRole // default
+        };
+
+        console.log("account pushed:" + accEmail);
+        window.db.accounts.push(newAccount);
+
+        //save to local storage
+        if (!isVerified) {
+            saveToStorage();
+            localStorage.setItem('unverified_email', accEmail);
+        } else {
+            isVerified.verified = true;
+            saveToStorage();
+        }
+        renderAccounts();
+        const modalEl = document.getElementById('account-modal');
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        modalInstance.hide();
+        document.getElementById('accountForm').reset();
+    }
+}
+
 // verify email
 function verifyEmail() {
     const findEmail = localStorage.getItem('unverified_email');
