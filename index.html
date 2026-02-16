@@ -15,12 +15,19 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
         <div class="container">
             <a class="navbar-brand" href="#/">Full Stack App (Josh Efraim C. Padernal)</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto flex-column">
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent"
+                aria-controls="navContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav ms-auto">
                     <!-- Visible when NOT logged in -->
                     <li class="nav-item role-logged-out"><a class="nav-link" href="#/login">Login</a></li>
                     <li class="nav-item role-logged-out"><a class="nav-link" href="#/register">Register</a></li>
-                    <!--  Visible when LOGGED in -->
+
+                    <!-- Visible when Logged in -->
                     <li class="nav-item dropdown role-logged-in">
                         <a class="nav-link dropdown-toggle" href="#" id="userDrop" data-bs-toggle="dropdown">
                             <span id="nav-name-display">User</span>
@@ -32,7 +39,7 @@
                             <li><a class="dropdown-item" href="#/userProfile">Profile</a></li>
                             <li><a class="dropdown-item" href="#/request">My Requests</a></li>
                             <li>
-                                <hr>
+                                <hr class="dropdown-divider">
                             </li>
                             <li><button class="dropdown-item text-danger" onclick="logout()">Logout</button></li>
                         </ul>
@@ -243,31 +250,30 @@
         </section>
         <!--Accounts page-->
         <section id="accounts" class="page">
-            <div class="row">
-                <div class="col">
-                    <h3>Accounts</h3>
-                </div>
-                <div class="col-6"></div>
-                <div class="col"><button type="button" class="btn btn-success" data-bs-toggle="modal"
-                        data-bs-target="#account-modal">+ Add
-                        Account</button></div>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
+                <h3 class="mb-2 mb-md-0">Accounts</h3>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#account-modal">
+                    + Add Account
+                </button>
             </div>
             <hr>
-            <div class="container">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th><b>ID</b></th>
-                            <th><b>EMAIL</b></th>
-                            <th><b>ROLE</b></th>
-                            <th><b>VERIFIED</b></th>
-                            <th><b>ACTION</b></th>
-                        </tr>
-                    </thead>
-                    <tbody id="account-table-body">
-                        <!--loop in js-->
-                    </tbody>
-                </table>
+            <div class="container-fluid px-0">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>EMAIL</th>
+                                <th>ROLE</th>
+                                <th>VERIFIED</th>
+                                <th class="text-center">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="account-table-body">
+                            <!-- loop in js -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!--account modal form-->
             <div class="modal fade" id="account-modal" tabindex="-1" aria-hidden="true">
@@ -311,7 +317,8 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-ouline-secondary"
                                 data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" form="accountForm" class="btn btn-primary">Save</button>
+                            <button type="submit" form="accountForm" class="btn btn-primary"
+                                onclick="addAccount(accFname,accLname,accEmail,accPassword,accRole,isVerified)">Save</button>
                         </div>
                     </div>
                 </div>
