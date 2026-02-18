@@ -280,6 +280,16 @@ function verifyEmail() {
     }
 }
 
+// toast message for succesful login
+function showLoginToast() {
+    const loginToast = document.getElementById('login-toast');
+    const showToast = new bootstrap.Toast(loginToast, {
+        autohide: true,
+        delay: 2000
+    });
+    showToast.show();
+    console.log("show toast");
+}
 
 // login account
 function login(event) {
@@ -298,10 +308,9 @@ function login(event) {
     if (findAccount) {
         // Save auth_token = email in localStorage
         localStorage.setItem('auth_token', findAccount.email);
-
+        showLoginToast(); // show login toast
         // Call `setAuthState(account) = true ,user
         setAuthState(findAccount);
-
         navigateTo('#/userProfile');
         console.log("Login successful");
     } else {
@@ -696,3 +705,4 @@ if (requestForm) {
         this.reset();
     });
 }
+
