@@ -69,7 +69,7 @@
         </section>
         <!-- register account form-->
         <section id="register-page" class="page">
-            <form onsubmit="registration(event)">
+            <form onsubmit="registration(event)" id="regFrom">
                 <div class="card">
                     <div class="card-body">
                         <h3>Register Account</h3>
@@ -111,7 +111,7 @@
         </section>
         <!--Login page-->
         <section id="login-page" class="page">
-            <form>
+            <form id="loginForm">
                 <div class="alert alert-success" role="alert" id="verified-alert">
                     &#9989; Email Verified you may now log in.
                 </div>
@@ -344,7 +344,6 @@
                     </div>
                 </div>
 
-                <!-- View 2: Shown when requests.length > 0 -->
                 <div id="user-request-view" style="display: none;">
                     <!-- user view-->
                     <div id="table-request-view" style="display: none;">

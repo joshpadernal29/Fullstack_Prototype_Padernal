@@ -183,6 +183,7 @@ function registration(event) {
     const inputLname = document.getElementById('lname').value;
     const inputEmail = document.getElementById('email').value;
     const inputPassword = document.getElementById('password').value;
+    const regForm = document.getElementById('regFrom');
 
     // check if email already exist in window.db.accounts
     const emailExist = window.db.accounts.some(acc => acc.email === inputEmail);
@@ -204,7 +205,7 @@ function registration(event) {
 
         console.log("account pushed:" + inputEmail);
         window.db.accounts.push(newAccount);
-
+        regForm.reset(); // reset form
         //save to local storage
         saveToStorage();
         localStorage.setItem('unverified_email', inputEmail);
@@ -285,7 +286,7 @@ function showLoginToast() {
     const loginToast = document.getElementById('login-toast');
     const showToast = new bootstrap.Toast(loginToast, {
         autohide: true,
-        delay: 2000
+        delay: 1000
     });
     showToast.show();
     console.log("show toast");
@@ -297,6 +298,7 @@ function login(event) {
     // get user input
     const userEmail = document.getElementById('loginEmail').value;
     const userPassword = document.getElementById('loginPassword').value;
+    const loginForm = document.getElementById('loginForm');
 
     // find email + password and verified in the storage and compare
     const findAccount = window.db.accounts.find(acc =>
@@ -311,10 +313,12 @@ function login(event) {
         showLoginToast(); // show login toast
         // Call `setAuthState(account) = true ,user
         setAuthState(findAccount);
+        loginForm.reset(); // reset form
         navigateTo('#/userProfile');
         console.log("Login successful");
     } else {
         alert("Invalid Email and password!");
+        loginForm.reset(); // reset form
     }
 }
 
