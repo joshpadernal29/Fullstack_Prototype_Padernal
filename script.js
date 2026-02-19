@@ -615,6 +615,7 @@ window.renderRequests = function () {
         } else {
             emptyView.style.display = 'none';
             tableView.style.display = 'block';
+            hideRequest.style.display = 'block';
             userTable.innerHTML = '';
 
             userRequest.forEach(req => {
