@@ -1,0 +1,24 @@
+{
+  "name": "fullstack-prototype-padernal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshpadernal29/Fullstack_Prototype_Padernal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/joshpadernal29/Fullstack_Prototype_Padernal/issues"
+  },
+  "homepage": "https://github.com/joshpadernal29/Fullstack_Prototype_Padernal#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
