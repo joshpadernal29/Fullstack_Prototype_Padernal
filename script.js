@@ -1,46 +1,6 @@
 let currentUser = null;
-const STORAGE_KEY = "ipt_demo_v1";
 const login_hash = ['#/userProfile', '#/request'];
 const admin_hash = ['#/accounts', '#/employees', '#/departments'];
-
-// save windwo.db data to local storage
-function saveToStorage() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(window.db));
-}
-
-// load data from the local storage
-function loadFromStorage() {
-    try {
-        const data = localStorage.getItem(STORAGE_KEY);
-        if (data) {
-            window.db = JSON.parse(data);
-        } else {
-            throw new Error("No data");
-        }
-    } catch (e) {
-        // default data
-        window.db = {
-            accounts: [
-                {
-                    email: "admin@example.com",
-                    password: "Password123!",
-                    verified: true,
-                    role: "admin",
-                    Fname: "Admin",
-                    Lname: "123"
-                }
-            ],
-            departments: [
-                { id: 1, name: "Engineering", description: "software team" },
-                { id: 2, name: "HR", description: "Human resources" }
-            ],
-            employees: [],
-            requests: []
-        };
-        saveToStorage();
-    }
-}
-loadFromStorage(); // initialize db
 
 function navigateTo(hash) {
     window.location.hash = hash;
@@ -293,32 +253,26 @@ function showLoginToast() {
 }
 
 // login account
-function login(event) {
-    event.preventDefault();
-    // get user input
-    const userEmail = document.getElementById('loginEmail').value;
-    const userPassword = document.getElementById('loginPassword').value;
-    const loginForm = document.getElementById('loginForm');
+// login api
+async function login_api(username, password) {
+    try {
+        const response = await fetch('http://localhost:3000/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
 
-    // find email + password and verified in the storage and compare
-    const findAccount = window.db.accounts.find(acc =>
-        acc.email === userEmail &&
-        acc.password === userPassword &&
-        acc.verified === true
-    );
-
-    if (findAccount) {
-        // Save auth_token = email in localStorage
-        localStorage.setItem('auth_token', findAccount.email);
-        showLoginToast(); // show login toast
-        // Call `setAuthState(account) = true ,user
-        setAuthState(findAccount);
-        loginForm.reset(); // reset form
-        navigateTo('#/userProfile');
-        console.log("Login successful");
-    } else {
-        alert("Invalid Email and password!");
-        loginForm.reset(); // reset form
+        const data = await response.json();
+        // check response
+        if (response.ok) {
+            // save token in-memory
+            sessionStorage.setItem('authToken', data.token);
+            showDashboard(data.user);
+        } else {
+            alert("Login Failed: " + data.error);
+        }
+    } catch (err) {
+        alert("Network Error!");
     }
 }
 
@@ -711,3 +665,23 @@ if (requestForm) {
     });
 }
 
+// get authentication header for protected routes
+function getAuthHeader() {
+    const token = sessionStorage.getItem('authToken');
+    return token ? { Authorization: `Bearer${token}` } : {};
+}
+
+// ex: fetch admin data
+async function loadAdminDashboard() {
+    const res = await fetch('http://localhost:3000/api/admin/dashoard', {
+        headers: getAuthHeader()
+    });
+
+    // check response
+    if (res.ok) {
+        const data = await res.json();
+        document.getElementById('content').innerHTML = data.message;
+    } else {
+        document.getElementById('content').innerText = 'Access Denied!';
+    }
+}
