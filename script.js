@@ -162,39 +162,54 @@ window.addEventListener('load', () => {
 
 window.addEventListener('hashchange', handleRouting);
 
-// --- CHANGED: Replaced local registration with dummy function for now (keep as is if logic is frontend only) ---
-function registration(event) {
+// --- CHANGED: used backend registration
+async function registration(event) {
     event.preventDefault();
-    const inputFname = document.getElementById('fname').value;
-    const inputLname = document.getElementById('lname').value;
-    const inputEmail = document.getElementById('email').value;
-    const inputPassword = document.getElementById('password').value;
+
+    const inputFname = document.getElementById('fname').value.trim();
+    const inputLname = document.getElementById('lname').value.trim();
+    const inputEmail = document.getElementById('email').value.trim();
+    const inputPassword = document.getElementById('password').value.trim();
     const regForm = document.getElementById('regFrom');
 
-    const emailExist = window.db.accounts.some(acc => acc.email === inputEmail);
-    if (emailExist) {
-        alert("Email already Exists!");
-    } else if (inputPassword.length < 6) {
-        alert("Password Must be 6 or more characters!");
-    } else {
-        const newAccount = {
-            Fname: inputFname,
-            Lname: inputLname,
-            email: inputEmail,
-            password: inputPassword,
-            verified: false,
-            role: "user"
-        };
-        window.db.accounts.push(newAccount);
-        regForm.reset();
-        saveToStorage();
-        localStorage.setItem('unverified_email', inputEmail);
-        document.getElementById('showEmail').innerText = inputEmail;
-        navigateTo('#/verify');
+    // Frontend validation
+    if (inputPassword.length < 6) {
+        return alert("Password must be 6 or more characters!");
+    }
+
+    try {
+        const response = await fetch('http://localhost:3000/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: inputEmail, // Using email as username for simplicity
+                password: inputPassword,
+                Fname: inputFname,
+                Lname: inputLname,
+                email: inputEmail
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            regForm.reset();
+            // Store email for the verification view as per your current logic
+            localStorage.setItem('unverified_email', data.email);
+            document.getElementById('showEmail').innerText = data.email;
+
+            alert("Registration successful!");
+            navigateTo('#/verify');
+        } else {
+            alert(data.error || "Registration failed");
+        }
+    } catch (error) {
+        console.error("Registration Error:", error);
+        alert("Could not connect to the server.");
     }
 }
 
-// --- CHANGED: Replaced the old local login() with the async API fetch logic from Step 1 ---
+// --- CHANGED: Replaced the old local login() with the async API fetch logic ---
 async function login(event) {
     event.preventDefault();
     const userEmail = document.getElementById('loginEmail').value;
@@ -214,10 +229,8 @@ async function login(event) {
         const data = await response.json();
 
         if (response.ok) {
-            // Step 1: Save token in sessionStorage
             sessionStorage.setItem('authToken', data.token);
 
-            // Step 2: Use the user object returned by backend
             setAuthState(data.user);
 
             showLoginToast();
@@ -239,16 +252,15 @@ function logout() {
     navigateTo('#/');
 }
 
-// --- CHANGED: Example function to test Step 2 (Protected Requests) ---
+// --- CHANGED:---
 async function loadAdminDashboard() {
     try {
         const res = await fetch('http://localhost:3000/api/admin/dashboard', {
-            headers: getAuthHeader() // Step 2: Adds the Bearer Token automatically
+            headers: getAuthHeader() //  Adds the Bearer Token automatically
         });
 
         if (res.ok) {
             const data = await res.json();
-            // Assuming you have an element with ID 'content' to show this
             const contentDiv = document.getElementById('content');
             if (contentDiv) contentDiv.innerHTML = data.message;
         } else {
